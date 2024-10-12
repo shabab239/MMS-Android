@@ -1,29 +1,40 @@
 package com.shabab.mezz;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
+import com.shabab.mezz.api.ApiResponse;
+import com.shabab.mezz.api.service.AuthService;
+import com.shabab.mezz.model.LoginRequest;
+import com.shabab.mezz.model.Mess;
+import com.shabab.mezz.model.User;
+import com.shabab.mezz.util.TokenManager;
+
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth firebaseAuth;
     private TextInputEditText cellEditText;
     private TextInputEditText passwordEditText;
-    private MaterialButton loginButton;
+    private MaterialButton loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,30 +47,22 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        loginButton.setOnClickListener(v -> {
-            signIn();
+        cellEditText = findViewById(R.id.cell);
+        passwordEditText = findViewById(R.id.password);
+        loginBtn = findViewById(R.id.loginBtn);
+
+        loginBtn.setOnClickListener(v -> {
+            login();
         });
     }
 
-    private void createAccount(String email, String password) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = firebaseAuth.getCurrentUser();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void signIn() {
-        String email = cellEditText.getText().toString().trim();
+    private void login() {
+        String cell = cellEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(email)) {
-            emailEditText.setError("Email is required");
-            emailEditText.requestFocus();
+        if (TextUtils.isEmpty(cell)) {
+            cellEditText.setError("Mobile Number is required");
+            cellEditText.requestFocus();
             return;
         }
 
@@ -69,23 +72,53 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = firebaseAuth.getCurrentUser();
-                        Toast.makeText(LoginActivity.this, "Sign-in successful.", Toast.LENGTH_SHORT).show();
+        LoginRequest loginRequest = new LoginRequest(cell, password);
 
-                        // Additional user information handling
-                        if (user != null) {
-                            boolean emailVerified = user.isEmailVerified();
-                            String uid = user.getUid();
-                        }
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:3000")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
+        AuthService apiService = retrofit.create(AuthService.class);
+
+        Call<ApiResponse> call = apiService.login(loginRequest);
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse apiResponse = response.body();
+                    if (apiResponse.isSuccessful()) {
+                        String token = (String) apiResponse.getData("token");
+
+                        TokenManager tokenManager = new TokenManager(getApplicationContext());
+                        tokenManager.saveToken(token);
+
+                        Map<String, Object> userMap = (Map<String, Object>) apiResponse.getData("user");
+                        Map<String, Object> messMap = (Map<String, Object>) apiResponse.getData("mess");
+
+                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("user", new Gson().toJson(userMap));
+                        editor.putString("mess", new Gson().toJson(messMap));
+                        editor.apply();
+
+                        Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
-                        // Authentication failed
-                        Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        String errorMessage = apiResponse.getMessage();
+                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
                     }
-                });
+                } else {
+                    Toast.makeText(getApplicationContext(), "Login Failed: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
 }
