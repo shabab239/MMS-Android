@@ -1,5 +1,6 @@
 package com.shabab.mezz;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 import com.shabab.mezz.model.Mess;
 import com.shabab.mezz.model.User;
@@ -23,12 +25,14 @@ public class HomeActivity extends AppCompatActivity {
     TextView messName;
     TextView messBalance;
 
+    MaterialCardView mealBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.home), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -44,5 +48,11 @@ public class HomeActivity extends AppCompatActivity {
 
         messName.setText(mess.getName());
         messBalance.setText("Balance: " + mess.getBalance());
+
+        mealBtn = findViewById(R.id.mealBtn);
+        mealBtn.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, MealActivity.class));
+        });
+
     }
 }

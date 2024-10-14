@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical">
+
+    <!-- User Name -->
+    <TextView
+        android:id="@+id/txtUserName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="User Name" />
+
+    <!-- Meal Count EditText -->
+    <EditText
+        android:id="@+id/edtMealCount"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:text="0" />
+
+    <!-- Up Button -->
+    <Button
+        android:id="@+id/btnUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Up" />
+
+    <!-- Down Button -->
+    <Button
+        android:id="@+id/btnDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Down" />
+
+</LinearLayout>
