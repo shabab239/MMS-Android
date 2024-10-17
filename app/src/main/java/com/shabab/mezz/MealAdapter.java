@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,18 +37,17 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
     @Override
     public void onBindViewHolder(@NonNull MealViewHolder holder, int position) {
         User user = userList.get(position);
-        holder.txtUserName.setText(user.getName());
+        holder.userName.setText(user.getName());
 
-        // Handle up/down arrow button clicks
-        holder.btnUp.setOnClickListener(v -> {
-            int currentMeals = Integer.parseInt(holder.edtMealCount.getText().toString());
-            holder.edtMealCount.setText(String.valueOf(currentMeals + 1));
+        holder.mealUp.setOnClickListener(v -> {
+            int currentMeals = Integer.parseInt(holder.mealCount.getText().toString());
+            holder.mealCount.setText(String.valueOf(currentMeals + 1));
         });
 
-        holder.btnDown.setOnClickListener(v -> {
-            int currentMeals = Integer.parseInt(holder.edtMealCount.getText().toString());
+        holder.mealDown.setOnClickListener(v -> {
+            int currentMeals = Integer.parseInt(holder.mealCount.getText().toString());
             if (currentMeals > 0) {
-                holder.edtMealCount.setText(String.valueOf(currentMeals - 1));
+                holder.mealCount.setText(String.valueOf(currentMeals - 1));
             }
         });
     }
@@ -59,16 +59,16 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
 
     public static class MealViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtUserName;
-        EditText edtMealCount;
-        Button btnUp, btnDown;
+        TextView userName;
+        TextView mealCount;
+        ImageButton mealUp, mealDown;
 
         public MealViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtUserName = itemView.findViewById(R.id.txtUserName);
-            edtMealCount = itemView.findViewById(R.id.edtMealCount);
-            btnUp = itemView.findViewById(R.id.btnUp);
-            btnDown = itemView.findViewById(R.id.btnDown);
+            userName = itemView.findViewById(R.id.userName);
+            mealCount = itemView.findViewById(R.id.mealCount);
+            mealUp = itemView.findViewById(R.id.mealUp);
+            mealDown = itemView.findViewById(R.id.mealDown);
         }
     }
 }

@@ -16,6 +16,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.shabab.mezz.api.ApiResponse;
+import com.shabab.mezz.api.service.ApiService;
 import com.shabab.mezz.api.service.AuthService;
 import com.shabab.mezz.model.LoginRequest;
 import com.shabab.mezz.model.Mess;
@@ -51,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password);
         loginBtn = findViewById(R.id.loginBtn);
 
+        cellEditText.setText("01700000000");
+        passwordEditText.setText("123456");
+
         loginBtn.setOnClickListener(v -> {
             login();
         });
@@ -79,9 +83,9 @@ public class LoginActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        AuthService apiService = retrofit.create(AuthService.class);
+        AuthService authService = retrofit.create(AuthService.class);
 
-        Call<ApiResponse> call = apiService.login(loginRequest);
+        Call<ApiResponse> call = authService.login(loginRequest);
         call.enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
@@ -91,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                         String token = (String) apiResponse.getData("token");
 
                         TokenManager tokenManager = new TokenManager(getApplicationContext());
+                        ApiService.setTokenManager(tokenManager);
                         tokenManager.saveToken(token);
 
                         Map<String, Object> userMap = (Map<String, Object>) apiResponse.getData("user");
