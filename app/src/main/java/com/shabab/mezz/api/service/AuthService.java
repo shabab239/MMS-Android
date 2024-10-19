@@ -5,10 +5,14 @@ import com.shabab.mezz.model.LoginRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface AuthService {
     @POST("/api/auth/login")
     Call<ApiResponse> login(@Body LoginRequest loginRequest);
+
+    @POST("/api/auth/isLoggedIn")
+    Call<ApiResponse> isLoggedIn(@Header("Authorization") String token);
 
 }

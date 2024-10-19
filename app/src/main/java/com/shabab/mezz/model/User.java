@@ -47,7 +47,7 @@ public class User {
     private List<Transaction> transactions;*/
 
     @SerializedName("messId")
-    private Integer messId;
+    private Long messId;
 
     public static List<User> getUsers(Map<String, Object> data, Context context) {
         try {
@@ -141,11 +141,11 @@ public class User {
         this.balance = balance;
     }
 
-    public Integer getMessId() {
+    public Long getMessId() {
         return messId;
     }
 
-    public void setMessId(Integer messId) {
+    public void setMessId(Long messId) {
         this.messId = messId;
     }
 }

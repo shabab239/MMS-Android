@@ -25,6 +25,7 @@ import com.shabab.mezz.util.TokenManager;
 
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText cellEditText;
     private TextInputEditText passwordEditText;
     private MaterialButton loginBtn;
+    private SharedPreferences sp;
+    private Retrofit retrofit;
+    private AuthService authService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,37 @@ public class LoginActivity extends AppCompatActivity {
 
         cellEditText.setText("01700000000");
         passwordEditText.setText("123456");
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:3000")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        authService = retrofit.create(AuthService.class);
+
+        sp = getSharedPreferences("sp", MODE_PRIVATE);
+
+        TokenManager tokenManager = new TokenManager(getApplicationContext());
+        if (tokenManager.getToken() != null || !tokenManager.getToken().isEmpty()) {
+            Call<ApiResponse> call = authService.isLoggedIn("Bearer " + tokenManager.getToken());
+            call.enqueue(new Callback<ApiResponse>() {
+                @Override
+                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                    try {
+                        ApiResponse apiResponse = response.body();
+                        if (apiResponse.isSuccessful()) {
+                            ApiService.setTokenManager(tokenManager);
+                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        }
+                    } catch (Exception e) {}
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse> call, Throwable t) {
+                    Toasty.warning(getApplicationContext(), "Please login again", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
 
         loginBtn.setOnClickListener(v -> {
             login();
@@ -78,49 +113,40 @@ public class LoginActivity extends AppCompatActivity {
 
         LoginRequest loginRequest = new LoginRequest(cell, password);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        AuthService authService = retrofit.create(AuthService.class);
-
         Call<ApiResponse> call = authService.login(loginRequest);
         call.enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse apiResponse = response.body();
-                    if (apiResponse.isSuccessful()) {
-                        String token = (String) apiResponse.getData("token");
+                 try {
+                     ApiResponse apiResponse = response.body();
+                     if (apiResponse.isSuccessful()) {
+                         String token = (String) apiResponse.getData("token");
 
-                        TokenManager tokenManager = new TokenManager(getApplicationContext());
-                        ApiService.setTokenManager(tokenManager);
-                        tokenManager.saveToken(token);
+                         TokenManager tokenManager = new TokenManager(getApplicationContext());
+                         ApiService.setTokenManager(tokenManager);
+                         tokenManager.saveToken(token);
 
-                        Map<String, Object> userMap = (Map<String, Object>) apiResponse.getData("user");
-                        Map<String, Object> messMap = (Map<String, Object>) apiResponse.getData("mess");
+                         Map<String, Object> userMap = (Map<String, Object>) apiResponse.getData("user");
+                         Map<String, Object> messMap = (Map<String, Object>) apiResponse.getData("mess");
 
-                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putString("user", new Gson().toJson(userMap));
-                        editor.putString("mess", new Gson().toJson(messMap));
-                        editor.apply();
+                         SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
+                         SharedPreferences.Editor editor = sp.edit();
+                         editor.putString("user", new Gson().toJson(userMap));
+                         editor.putString("mess", new Gson().toJson(messMap));
+                         editor.apply();
 
-                        Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    } else {
-                        String errorMessage = apiResponse.getMessage();
-                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Login Failed: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
+                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                     } else {
+                         Toasty.error(getApplicationContext(), apiResponse.getMessage(), Toast.LENGTH_LONG).show();
+                     }
+                 } catch (Exception e) {
+                     Toasty.error(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/_12sdp"
-    app:cardCornerRadius="@dimen/_16sdp">
+    app:cardCornerRadius="@dimen/_16sdp"
+    android:layout_marginBottom="@dimen/_6sdp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +25,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/mealCount"
+            android:id="@+id/meals"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:text="0"

@@ -13,6 +13,7 @@ googleGmsGoogleServices = "4.4.2"
 retrofit = "2.11.0"
 sdpAndroid = "1.1.1"
 securityCrypto = "1.1.0-alpha06"
+toasty = "1.5.2"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
@@ -29,6 +30,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
 security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+toasty = { module = "com.github.GrenderG:Toasty", version.ref = "toasty" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
