@@ -14,6 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class User {
 
     @SerializedName("id")
@@ -29,25 +38,22 @@ public class User {
     private String password;
 
     @SerializedName("role")
-    private UserRole role;
+    private Role role;
 
     @SerializedName("balance")
     private Double balance;
 
-/*    @SerializedName("meals")
-    private List<Meal> meals;
+    @SerializedName("mess")
+    private Mess mess;
 
-    @SerializedName("bazars")
-    private List<Bazar> bazars;
+    public User(Long id) {
+        this.id = id;
+    }
 
-    @SerializedName("bills")
-    private List<Bill> bills;
-
-    @SerializedName("transactions")
-    private List<Transaction> transactions;*/
-
-    @SerializedName("messId")
-    private Long messId;
+    @Override
+    public String toString() {
+        return name;
+    }
 
     public static List<User> getUsers(Map<String, Object> data, Context context) {
         try {
@@ -72,81 +78,11 @@ public class User {
         return new ArrayList<>();
     }
 
-    public enum UserRole {
-        ADMIN("ADMIN"),
-        MANAGER("MANAGER"),
-        MEMBER("MEMBER");
-
-        private final String role;
-
-        UserRole(String role) {
-            this.role = role;
-        }
-
-        public String getRole() {
-            return role;
-        }
+    public enum Role {
+        ROLE_ADMIN,
+        ROLE_MANAGER,
+        ROLE_MEMBER
     }
 
-    // Constructor
-    public User() {
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCell() {
-        return cell;
-    }
-
-    public void setCell(String cell) {
-        this.cell = cell;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
-
-    public Long getMessId() {
-        return messId;
-    }
-
-    public void setMessId(Long messId) {
-        this.messId = messId;
-    }
 }
 

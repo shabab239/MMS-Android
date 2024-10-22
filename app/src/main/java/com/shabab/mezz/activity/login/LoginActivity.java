@@ -1,4 +1,4 @@
-package com.shabab.mezz;
+package com.shabab.mezz.activity.login;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,13 +15,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
+import com.shabab.mezz.R;
+import com.shabab.mezz.activity.home.HomeActivity;
 import com.shabab.mezz.api.ApiResponse;
 import com.shabab.mezz.api.service.ApiService;
 import com.shabab.mezz.api.service.AuthService;
-import com.shabab.mezz.model.LoginRequest;
-import com.shabab.mezz.model.Mess;
-import com.shabab.mezz.model.User;
+import com.shabab.mezz.dto.LoginDTO;
+import com.shabab.mezz.util.Constants;
 import com.shabab.mezz.util.TokenManager;
+import com.shabab.mezz.util.Wait;
 
 import java.util.Map;
 
@@ -60,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setText("123456");
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000")
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -68,8 +70,9 @@ public class LoginActivity extends AppCompatActivity {
 
         sp = getSharedPreferences("sp", MODE_PRIVATE);
 
+        Wait.show(this);
         TokenManager tokenManager = new TokenManager(getApplicationContext());
-        if (tokenManager.getToken() != null || !tokenManager.getToken().isEmpty()) {
+        if (tokenManager.getToken() != null && !tokenManager.getToken().isEmpty()) {
             Call<ApiResponse> call = authService.isLoggedIn("Bearer " + tokenManager.getToken());
             call.enqueue(new Callback<ApiResponse>() {
                 @Override
@@ -81,10 +84,12 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                         }
                     } catch (Exception e) {}
+                    Wait.dismiss();
                 }
 
                 @Override
                 public void onFailure(Call<ApiResponse> call, Throwable t) {
+                    Wait.dismiss();
                     Toasty.warning(getApplicationContext(), "Please login again", Toast.LENGTH_LONG).show();
                 }
             });
@@ -111,28 +116,26 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        LoginRequest loginRequest = new LoginRequest(cell, password);
+        LoginDTO loginDTO = new LoginDTO(cell, password);
 
-        Call<ApiResponse> call = authService.login(loginRequest);
+        Call<ApiResponse> call = authService.login(loginDTO);
         call.enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                  try {
                      ApiResponse apiResponse = response.body();
                      if (apiResponse.isSuccessful()) {
-                         String token = (String) apiResponse.getData("token");
+                         String token = (String) apiResponse.getData("jwt");
 
                          TokenManager tokenManager = new TokenManager(getApplicationContext());
                          ApiService.setTokenManager(tokenManager);
                          tokenManager.saveToken(token);
 
                          Map<String, Object> userMap = (Map<String, Object>) apiResponse.getData("user");
-                         Map<String, Object> messMap = (Map<String, Object>) apiResponse.getData("mess");
 
                          SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
                          SharedPreferences.Editor editor = sp.edit();
                          editor.putString("user", new Gson().toJson(userMap));
-                         editor.putString("mess", new Gson().toJson(messMap));
                          editor.apply();
 
                          startActivity(new Intent(LoginActivity.this, HomeActivity.class));

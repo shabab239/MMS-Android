@@ -1,4 +1,4 @@
-package com.shabab.mezz;
+package com.shabab.mezz.activity.meal;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -17,10 +17,12 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.shabab.mezz.R;
 import com.shabab.mezz.api.ApiResponse;
 import com.shabab.mezz.api.service.ApiService;
 import com.shabab.mezz.api.service.MealService;
-import com.shabab.mezz.model.MealRequest;
+import com.shabab.mezz.dto.MealDTO;
+import com.shabab.mezz.util.Wait;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,13 +36,13 @@ import retrofit2.Response;
 
 public class MealActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerViewUsers;
+    private RecyclerView recyclerView;
     private MealAdapter mealAdapter;
     private TextView datePicker;
     private int day;
     private int month;
     private int year;
-    private List<MealRequest> mealRequestList;
+    private List<MealDTO> mealList;
     private Button recordMeals;
 
     @Override
@@ -81,15 +83,16 @@ public class MealActivity extends AppCompatActivity {
             recordMeals();
         });
 
-        recyclerViewUsers = findViewById(R.id.recyclerViewUsers);
-        recyclerViewUsers.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mealAdapter = new MealAdapter(new ArrayList<>(), MealActivity.this);
-        recyclerViewUsers.setAdapter(mealAdapter);
+        recyclerView.setAdapter(mealAdapter);
 
         getAndSetMeals();
     }
 
     private void getAndSetMeals() {
+        Wait.show(this);
         MealService mealService = ApiService.getService(MealService.class);
 
         Call<ApiResponse> call = mealService.getDailyMealRecords(day, month + 1, year);
@@ -100,29 +103,32 @@ public class MealActivity extends AppCompatActivity {
                     ApiResponse apiResponse = response.body();
                     if (apiResponse.isSuccessful()) {
                         Map<String, Object> data = apiResponse.getData();
-                        mealRequestList = MealRequest.getDailyMealRecords(data, MealActivity.this);
+                        mealList = MealDTO.getDailyMealRecords(data, MealActivity.this);
 
-                        mealAdapter = new MealAdapter(mealRequestList, MealActivity.this);
-                        recyclerViewUsers.setAdapter(mealAdapter);
+                        mealAdapter = new MealAdapter(mealList, MealActivity.this);
+                        recyclerView.setAdapter(mealAdapter);
                     } else {
                         Toasty.error(MealActivity.this, apiResponse.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     Toasty.error(MealActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
+                Wait.dismiss();
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Wait.dismiss();
                 Toasty.error(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void recordMeals() {
+        Wait.show(this);
         MealService mealService = ApiService.getService(MealService.class);
 
-        Call<ApiResponse> call = mealService.recordMeals(mealAdapter.getMealRequestList());
+        Call<ApiResponse> call = mealService.recordMeals(mealAdapter.getMealList());
         call.enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
@@ -136,10 +142,12 @@ public class MealActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Toasty.error(MealActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
+                Wait.dismiss();
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Wait.dismiss();
                 Toasty.error(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

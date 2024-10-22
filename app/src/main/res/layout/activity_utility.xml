@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/meal"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".activity.utility.UtilityActivity"
     android:padding="@dimen/_16sdp">
 
     <TextView
@@ -15,7 +16,7 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:gravity="center"
         android:padding="@dimen/_10sdp"
-        android:text="Meal Record"
+        android:text="Utility Bills"
         android:textSize="@dimen/_16sdp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/datePicker"
@@ -38,7 +39,7 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/recordMeals"
+        app:layout_constraintBottom_toTopOf="@+id/addUtility"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,10 +55,10 @@
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/recordMeals"
+        android:id="@+id/addUtility"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="Add Utility"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />

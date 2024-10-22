@@ -1,7 +1,7 @@
 package com.shabab.mezz.api.service;
 
 import com.shabab.mezz.api.ApiResponse;
-import com.shabab.mezz.model.LoginRequest;
+import com.shabab.mezz.dto.LoginDTO;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -10,9 +10,9 @@ import retrofit2.http.POST;
 
 public interface AuthService {
     @POST("/api/auth/login")
-    Call<ApiResponse> login(@Body LoginRequest loginRequest);
+    Call<ApiResponse> login(@Body LoginDTO loginDTO);
 
-    @POST("/api/auth/isLoggedIn")
+    @POST("/api/user/isLoggedIn")
     Call<ApiResponse> isLoggedIn(@Header("Authorization") String token);
 
 }

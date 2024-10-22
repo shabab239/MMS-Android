@@ -1,4 +1,4 @@
-package com.shabab.mezz;
+package com.shabab.mezz.activity.meal;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,17 +10,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shabab.mezz.model.MealRequest;
+import com.shabab.mezz.R;
+import com.shabab.mezz.dto.MealDTO;
 
 import java.util.List;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder> {
 
-    private List<MealRequest> mealRequestList;
+    private List<MealDTO> mealList;
     private Context context;
 
-    public MealAdapter(List<MealRequest> mealRequestList, Context context) {
-        this.mealRequestList = mealRequestList;
+    public MealAdapter(List<MealDTO> mealList, Context context) {
+        this.mealList = mealList;
         this.context = context;
     }
 
@@ -34,32 +35,32 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MealViewHolder holder, int position) {
-        MealRequest mealRequest = mealRequestList.get(position);
-        holder.userName.setText(mealRequest.getUsername());
-        holder.meals.setText(String.valueOf(mealRequest.getMeals()));
+        MealDTO mealDTO = mealList.get(position);
+        holder.userName.setText(mealDTO.getUsername());
+        holder.meals.setText(String.valueOf(mealDTO.getMeals()));
 
         holder.mealUp.setOnClickListener(v -> {
-            int currentMeals = Integer.parseInt(holder.meals.getText().toString());
+            double currentMeals = Double.parseDouble(holder.meals.getText().toString());
             holder.meals.setText(String.valueOf(currentMeals + 1));
-            mealRequest.setMeals(currentMeals + 1);
+            mealDTO.setMeals(currentMeals + 1);
         });
 
         holder.mealDown.setOnClickListener(v -> {
-            int currentMeals = Integer.parseInt(holder.meals.getText().toString());
+            double currentMeals = Double.parseDouble(holder.meals.getText().toString());
             if (currentMeals > 0) {
                 holder.meals.setText(String.valueOf(currentMeals - 1));
-                mealRequest.setMeals(currentMeals - 1);
+                mealDTO.setMeals(currentMeals - 1);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mealRequestList.size();
+        return mealList.size();
     }
 
-    public List<MealRequest> getMealRequestList() {
-        return mealRequestList;
+    public List<MealDTO> getMealList() {
+        return mealList;
     }
 
     public static class MealViewHolder extends RecyclerView.ViewHolder {

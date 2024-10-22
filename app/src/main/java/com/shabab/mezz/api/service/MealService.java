@@ -1,7 +1,7 @@
 package com.shabab.mezz.api.service;
 
 import com.shabab.mezz.api.ApiResponse;
-import com.shabab.mezz.model.MealRequest;
+import com.shabab.mezz.dto.MealDTO;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ import retrofit2.http.Query;
 
 public interface MealService {
 
-    @GET("api/meal/getDailyMealRecords")
+    @GET("/api/meal/getDailyMealRecords")
     Call<ApiResponse> getDailyMealRecords(@Query("day") int day,
                                           @Query("month") int month,
                                           @Query("year") int year);
 
-    @POST("api/meal/recordMeals")
-    Call<ApiResponse> recordMeals(@Body List<MealRequest> mealRequests);
+    @POST("/api/meal/recordMeals")
+    Call<ApiResponse> recordMeals(@Body List<MealDTO> mealList);
 
 }

@@ -1,6 +1,7 @@
 package com.shabab.mezz.api.service;
 
 import com.shabab.mezz.util.AuthInterceptor;
+import com.shabab.mezz.util.Constants;
 import com.shabab.mezz.util.TokenManager;
 
 import okhttp3.OkHttpClient;
@@ -28,7 +29,7 @@ public class ApiService {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:3000")
+                    .baseUrl(Constants.BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
