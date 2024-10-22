@@ -3,6 +3,7 @@ package com.shabab.mezz.activity.purchase;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -56,11 +57,7 @@ public class PurchaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_purchase);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        
 
         final Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_MONTH);
@@ -99,6 +96,8 @@ public class PurchaseActivity extends AppCompatActivity {
     private void showAddPurchaseDialog() {
         Dialog purchageDialog = new Dialog(this);
         purchageDialog.setContentView(R.layout.dialog_add_purchase);
+        purchageDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
 
         TextInputEditText editTextDescription = purchageDialog.findViewById(R.id.description);
         TextInputEditText editTextCost = purchageDialog.findViewById(R.id.cost);

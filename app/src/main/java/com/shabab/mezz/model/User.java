@@ -34,6 +34,9 @@ public class User {
     @SerializedName("cell")
     private String cell;
 
+    @SerializedName("email")
+    private String email;
+
     @SerializedName("password")
     private String password;
 

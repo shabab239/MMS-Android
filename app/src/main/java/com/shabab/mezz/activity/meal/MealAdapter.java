@@ -52,6 +52,22 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                 mealDTO.setMeals(currentMeals - 1);
             }
         });
+
+        holder.mealUp.setOnLongClickListener(v -> {
+            double currentMeals = Double.parseDouble(holder.meals.getText().toString());
+            holder.meals.setText(String.valueOf(currentMeals + 0.5));
+            mealDTO.setMeals(currentMeals + 0.5);
+            return true; // Indicate that the long press was handled
+        });
+
+        holder.mealDown.setOnLongClickListener(v -> {
+            double currentMeals = Double.parseDouble(holder.meals.getText().toString());
+            if (currentMeals >= 0.5) {
+                holder.meals.setText(String.valueOf(currentMeals - 0.5));
+                mealDTO.setMeals(currentMeals - 0.5);
+            }
+            return true; // Indicate that the long press was handled
+        });
     }
 
     @Override

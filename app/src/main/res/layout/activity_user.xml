@@ -5,9 +5,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/_16sdp"
     android:background="@drawable/bg_home"
-    tools:context=".activity.purchase.PurchaseActivity">
+    android:padding="@dimen/_16sdp"
+
+    tools:context=".activity.transaction.TransactionActivity">
 
     <TextView
         android:id="@+id/title"
@@ -17,7 +18,7 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:gravity="center"
         android:padding="@dimen/_10sdp"
-        android:text="Purchases"
+        android:text="Users"
         android:textSize="@dimen/_16sdp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
@@ -26,18 +27,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/datePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pick date"
-        app:layout_constraintBottom_toBottomOf="@+id/addPurchase"
-        app:layout_constraintEnd_toStartOf="@+id/addPurchase"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addPurchase" />
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -45,22 +34,20 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:layout_weight="1"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/addPurchase"
+        app:layout_constraintBottom_toTopOf="@+id/addTransaction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <Button
-        android:id="@+id/addPurchase"
+        android:id="@+id/addTransaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Purchase"
         android:backgroundTint="@color/green"
+        android:text="Add User"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/datePicker"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerView"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
 
 

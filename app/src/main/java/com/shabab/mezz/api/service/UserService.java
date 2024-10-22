@@ -9,4 +9,7 @@ public interface UserService {
     @GET("/api/user/")
     Call<ApiResponse> getAllUsers();
 
+    @GET("/api/user/getDashboardInfo")
+    Call<ApiResponse> getDashboardInfo();
+
 }

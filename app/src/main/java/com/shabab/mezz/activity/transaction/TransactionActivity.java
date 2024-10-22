@@ -5,6 +5,7 @@ import static androidx.core.content.ContentProviderCompat.requireContext;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -62,11 +63,7 @@ public class TransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_transaction);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        
 
         final Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_MONTH);
@@ -103,6 +100,8 @@ public class TransactionActivity extends AppCompatActivity {
     private void showAddTransactionDialog() {
         Dialog transactionDialog = new Dialog(this);
         transactionDialog.setContentView(R.layout.dialog_add_transaction);
+        transactionDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
 
         TextInputEditText editTextAmount = transactionDialog.findViewById(R.id.amount);
         TextInputEditText editTextDate = transactionDialog.findViewById(R.id.date);

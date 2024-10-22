@@ -2,6 +2,8 @@ package com.shabab.mezz.activity.utility;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -20,6 +22,7 @@ import com.shabab.mezz.R;
 import com.shabab.mezz.api.ApiResponse;
 import com.shabab.mezz.api.service.ApiService;
 import com.shabab.mezz.api.service.UtilityService;
+import com.shabab.mezz.model.User;
 import com.shabab.mezz.model.Utility;
 import com.shabab.mezz.util.Wait;
 
@@ -45,11 +48,6 @@ public class UtilityActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utility);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         addUtility = findViewById(R.id.addUtility);
         recyclerView = findViewById(R.id.recyclerView);
@@ -65,9 +63,9 @@ public class UtilityActivity extends AppCompatActivity {
     private void showAddUtilityDialog() {
         Dialog utilityDialog = new Dialog(this);
         utilityDialog.setContentView(R.layout.dialog_add_utility);
+        utilityDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         Spinner monthSpinner = utilityDialog.findViewById(R.id.monthSpinner);
-        TextInputEditText editTextMonth = utilityDialog.findViewById(R.id.month);
         TextInputEditText editTextYear = utilityDialog.findViewById(R.id.year);
         TextInputEditText editTextCost = utilityDialog.findViewById(R.id.cost);
         Button saveUtilityBtn = utilityDialog.findViewById(R.id.saveUtility);
@@ -80,21 +78,20 @@ public class UtilityActivity extends AppCompatActivity {
         cancelBtn.setOnClickListener(v -> utilityDialog.dismiss());
 
         saveUtilityBtn.setOnClickListener(v -> {
-            String monthString = editTextMonth.getText().toString().trim();
+            int selectedMonthPosition = monthSpinner.getSelectedItemPosition();
             String yearString = editTextYear.getText().toString().trim();
             String costString = editTextCost.getText().toString().trim();
 
-            if (monthString.isEmpty() || yearString.isEmpty() || costString.isEmpty()) {
+            if (yearString.isEmpty() || costString.isEmpty() || selectedMonthPosition == AdapterView.INVALID_POSITION) {
                 Toasty.error(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            int month = Integer.parseInt(monthString);
             int year = Integer.parseInt(yearString);
             double cost = Double.parseDouble(costString);
 
             Utility newUtility = new Utility();
-            newUtility.setMonth(month);
+            newUtility.setMonth(selectedMonthPosition + 1);
             newUtility.setYear(year);
             newUtility.setCost(cost);
 

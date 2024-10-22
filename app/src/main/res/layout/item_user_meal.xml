@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="User Name"
-            android:textSize="@dimen/_16sdp"
+            android:textSize="@dimen/_10sdp"
             android:textStyle="bold" />
 
         <TextView
@@ -29,7 +29,7 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textSize="@dimen/_24sdp"/>
+            android:textSize="@dimen/_16sdp"/>
 
         <ImageButton
             android:id="@+id/mealUp"

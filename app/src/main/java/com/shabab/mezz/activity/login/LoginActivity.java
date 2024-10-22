@@ -70,7 +70,6 @@ public class LoginActivity extends AppCompatActivity {
 
         sp = getSharedPreferences("sp", MODE_PRIVATE);
 
-        Wait.show(this);
         TokenManager tokenManager = new TokenManager(getApplicationContext());
         if (tokenManager.getToken() != null && !tokenManager.getToken().isEmpty()) {
             Call<ApiResponse> call = authService.isLoggedIn("Bearer " + tokenManager.getToken());
@@ -84,12 +83,10 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                         }
                     } catch (Exception e) {}
-                    Wait.dismiss();
                 }
 
                 @Override
                 public void onFailure(Call<ApiResponse> call, Throwable t) {
-                    Wait.dismiss();
                     Toasty.warning(getApplicationContext(), "Please login again", Toast.LENGTH_LONG).show();
                 }
             });
